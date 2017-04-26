@@ -50,7 +50,7 @@ set_slot:
 	bgt $t4, 255, set_slot_error
 	blt $t5, 0, set_slot_error
 	bgt $t5, 255, set_slot_error
-	bgt $t6, 255, set_slot_error
+	bgt $t5, 255, set_slot_error
 	
 	#addi $t0, $t0, -9
 		
@@ -153,7 +153,8 @@ clear_board:
     move $t0, $a0	# matrix being passed
     move $t1, $a1	# number of rows
     move $t2, $a2	# number of columns
-    
+    bltz $t1, get_slot_error
+    bltz $t2, get_slot_error
     li $t9, 46 # the ascii character for "." is 46, not sure if this is the correct way to do this
     
     li $t3, 0  # i, row counter
@@ -167,10 +168,10 @@ clear_board:
 
 	mul $t5, $t3, $t2 # i * num_columns
 	add $t5, $t5, $t4 # i * num_columns + j
-	sll $t5, $t5, 2   # 4*(i * num_columns + j)  Mult by 4 b/c we have an array of 4-byte words
+	sll $t5, $t5, 1   # 4*(i * num_columns + j)  Mult by 4 b/c we have an array of 4-byte words
 	add $t5, $t5, $t0 # base_addr + 4*(i * num_columns + j)
-	sw $t9, 0($t5) # needs to store the ascii characer "."
-
+	sb $t9, 0($t5) # needs to store the ascii characer "."
+	sb $0, 1($t5)
 	addi $t4, $t4, 1  # j++
 	
 	
