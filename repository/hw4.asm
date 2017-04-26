@@ -50,6 +50,7 @@ set_slot:
 	bgt $t4, 255, set_slot_error
 	blt $t5, 0, set_slot_error
 	bgt $t5, 255, set_slot_error
+	bgt $t6, 255, set_slot_error
 	
 	#addi $t0, $t0, -9
 		
