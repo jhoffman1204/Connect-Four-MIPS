@@ -1,0 +1,173 @@
+.data
+
+newline:  .asciiz "\n"
+##################################################################
+# Arguments for test cases. You should change these to create your own tests.
+
+setSlots_msg: .asciiz "\n##### Testing Part 1: slots #####"
+.align 2
+matrix: .space 60 # 5 x 3 matrix of 4-byte words
+rows: .word 4
+columns: .word 5
+char: .asciiz "a"
+row: .word 2
+column: .word 1
+turn: .word 0
+
+drop_piece_col: .word 3
+drop_piece_char: .asciiz "R"
+drop_piece_turn: .word 7
+
+loadBoard_msg: .asciiz "\n##### Testing Part 1: slots #####"
+loadBoard_fileInput: .asciiz "load_board_example" 
+
+check_winner_text: .asciiz " is the winner\n"
+##################################################################
+# Constants
+.eqv QUIT 10
+.eqv PRINT_STRING 4
+.eqv PRINT_INT 1
+
+.text
+.globl main
+
+####################################################################
+# This is the "main" of your program; Everything starts here.
+####################################################################
+
+main:   
+
+    ##########################
+    # load_board
+    ##########################
+    # (int num_rows, int num_cols) load_board(slot[][] board, char[] filename)
+    
+    la $a0, matrix
+    la $a1, loadBoard_fileInput
+    
+    jal load_board
+
+    ##########################
+    # display_board
+    ##########################
+    # int display_board(slot[][] board, int num_rows, int num_cols)
+
+	la $a0, matrix
+	lw $a1, rows
+        lw $a2, columns
+
+	jal display_board
+j done_testing
+    ##########################
+    # drop_piece
+    ##########################	
+     
+	# int drop_piece(slot[][] board, int num_rows, int num_cols, int col, char piece, int turn_num)
+	
+	la $a0, matrix
+	lw $a1, rows
+        lw $a2, columns
+        
+        lw $a3, drop_piece_col
+        
+        lw $t0, drop_piece_char
+        lw $t1, drop_piece_turn
+        
+        addi $sp, $sp, -8
+        sw $t0, 0($sp)
+        sw $t1, 4($sp)
+        
+        #jal drop_piece
+        
+        addi $sp, $sp, 8	# return the value back to the stack
+        
+    ##########################
+    # display_board
+    ##########################
+    # int display_board(slot[][] board, int num_rows, int num_cols)
+
+	la $a0, matrix
+	lw $a1, rows
+        lw $a2, columns
+
+	#jal display_board
+	
+    ##########################
+    # undo_piece
+    ##########################
+    # int display_board(slot[][] board, int num_rows, int num_cols)
+
+	la $a0, matrix
+	lw $a1, rows
+        lw $a2, columns
+
+	#jal undo_piece
+	
+    ##########################
+    # display_board
+    ##########################
+    # int display_board(slot[][] board, int num_rows, int num_cols)
+
+	la $a0, matrix
+	lw $a1, rows
+        lw $a2, columns
+
+	jal display_board
+
+	
+    ##########################
+    # check_winner
+    ##########################
+    # char check_winner(slot[][] board, int num_rows, int num_cols)
+
+	la $a0, matrix
+	lw $a1, rows
+        lw $a2, columns
+
+	jal check_winner
+	
+	move $t0, $v0
+	
+	li $v0, 11
+	move $a0, $t0
+	syscall
+	
+	li $v0, 4
+	la $a0, check_winner_text
+	syscall
+	
+    ##########################
+    # check_diagonal_winner
+    ##########################	
+		
+	la $a0, matrix
+	lw $a1, rows
+        lw $a2, columns
+
+	jal check_diagonal_winner
+	
+	move $t0, $v0
+	
+	li $v0, 11
+	move $a0, $t0
+	syscall
+	
+	li $v0, 4
+	la $a0, check_winner_text
+	syscall	
+		
+done_testing:		
+    # Exit the program
+    li	$v0, 10
+    syscall
+
+####################################################################
+# End of MAIN program
+####################################################################
+
+
+####################################################################
+# Student defined functions will be included starting here
+####################################################################
+
+.include "hw4.asm"
