@@ -50,7 +50,6 @@ set_slot:
 	bgt $t4, 255, set_slot_error
 	blt $t5, 0, set_slot_error
 	bgt $t5, 255, set_slot_error
-	bgt $t5, 255, set_slot_error
 	
 	#addi $t0, $t0, -9
 		
@@ -67,7 +66,7 @@ set_slot:
 	#t7 is now the address of where we are saving to 
 	sb $t3, 0($t7)
 	addi $t7, $t7, 1
-	#addi $t6, $t6, 48
+	addi $t6, $t6, 48
 	sb $t6, 0($t7)
 	
 	# iterate the turn number by 1
@@ -126,7 +125,7 @@ get_slot:
     move $v1, $t4
     ##########################################
     
-    #li $v0, 0
+    li $v0, 0
     j finish_get_slot
     get_slot_error:
         li $v0, -1
@@ -153,8 +152,7 @@ clear_board:
     move $t0, $a0	# matrix being passed
     move $t1, $a1	# number of rows
     move $t2, $a2	# number of columns
-    bltz $t1, get_slot_error
-    bltz $t2, get_slot_error
+    
     li $t9, 46 # the ascii character for "." is 46, not sure if this is the correct way to do this
     
     li $t3, 0  # i, row counter
@@ -168,10 +166,10 @@ clear_board:
 
 	mul $t5, $t3, $t2 # i * num_columns
 	add $t5, $t5, $t4 # i * num_columns + j
-	sll $t5, $t5, 1   # 4*(i * num_columns + j)  Mult by 4 b/c we have an array of 4-byte words
+	sll $t5, $t5, 2   # 4*(i * num_columns + j)  Mult by 4 b/c we have an array of 4-byte words
 	add $t5, $t5, $t0 # base_addr + 4*(i * num_columns + j)
-	sb $t9, 0($t5) # needs to store the ascii characer "."
-	sb $0, 1($t5)
+	sw $t9, 0($t5) # needs to store the ascii characer "."
+
 	addi $t4, $t4, 1  # j++
 	
 	
@@ -1403,7 +1401,7 @@ drop_piece:
     lw $t6, 24($sp)
     addi $sp, $sp, 28 # need to save all thes avlues on the stack for when the get_slot method is called
     
-    beq $t7, 46, set_the_slot  
+    beqz $t7, set_the_slot  
     
     addi $t6, $t6, 1
 j drop_piece_loop

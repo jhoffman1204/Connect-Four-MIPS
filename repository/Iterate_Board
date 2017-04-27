@@ -37,6 +37,18 @@ check_winner_text: .asciiz " is the winner\n"
 
 main:   
 
+
+    ##########################
+    # clear_board 
+    ##########################
+
+    #int clear_board(slot[][] board, int num_rows, int num_cols)
+    
+    la $a0, matrix
+    lw $a1, rows
+    lw $a2, columns
+
+    jal clear_board
     ##########################
     # load_board
     ##########################
@@ -47,7 +59,7 @@ main:
     
     jal load_board
 
-    ##########################
+   ##########################
     # display_board
     ##########################
     # int display_board(slot[][] board, int num_rows, int num_cols)
@@ -57,7 +69,8 @@ main:
         lw $a2, columns
 
 	jal display_board
-j done_testing
+	
+	
     ##########################
     # drop_piece
     ##########################	
@@ -71,16 +84,29 @@ j done_testing
         lw $a3, drop_piece_col
         
         lw $t0, drop_piece_char
-        lw $t1, drop_piece_turn
+        lw $t1, drop_piece_turn # COL 3: turn 7:
         
         addi $sp, $sp, -8
         sw $t0, 0($sp)
         sw $t1, 4($sp)
         
-        #jal drop_piece
+        jal drop_piece
         
         addi $sp, $sp, 8	# return the value back to the stack
         
+        
+    ##########################
+    # display_board
+    ##########################
+    # int display_board(slot[][] board, int num_rows, int num_cols)
+
+	la $a0, matrix
+	lw $a1, rows
+        lw $a2, columns
+
+	jal display_board      
+	
+j done_testing    	
     ##########################
     # display_board
     ##########################
